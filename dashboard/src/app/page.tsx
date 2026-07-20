@@ -1,11 +1,14 @@
 "use client";
 
 import { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Mic, Send, Globe, Shield, Coins, Sparkles, Terminal } from 'lucide-react';
 
 export default function Home() {
   const [topic, setTopic] = useState("我是一間台灣的 AI 軟體新創，團隊有 3 個人，年營收大概 100 萬美金。我想要搬到杜拜，幫我弄好一切。");
   const [logs, setLogs] = useState<{agent: string, msg: string}[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isListening, setIsListening] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const startOasis = async () => {
@@ -45,7 +48,7 @@ export default function Home() {
                  setLogs(prev => [...prev, { agent: "SYSTEM_RESULT", msg: data.report }]);
               }
             } catch (e) {
-                // Ignore parse errors on partial chunks
+                // Ignore parse errors
             }
           }
         }
@@ -62,172 +65,190 @@ export default function Home() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [logs]);
 
-  // Helper to format agent names professionally
-  const formatAgentName = (name: string) => {
-    if (name === 'SYSTEM_RESULT') return 'Final Report';
-    return name.replace(/_/g, ' ');
+  const toggleListen = () => {
+    setIsListening(!isListening);
+    // Placeholder for actual Web Speech API integration
+  };
+
+  const getAgentIcon = (agentName: string) => {
+    if (agentName.includes('Legal')) return <Shield className="w-4 h-4 text-blue-400" />;
+    if (agentName.includes('Finance')) return <Coins className="w-4 h-4 text-emerald-400" />;
+    if (agentName.includes('Executive') || agentName.includes('Concierge')) return <Globe className="w-4 h-4 text-purple-400" />;
+    return <Sparkles className="w-4 h-4 text-[#D4AF37]" />;
   };
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-primary-100 selection:text-primary-700">
+    <main className="min-h-screen relative overflow-hidden flex flex-col">
+      {/* Background Decorative Orbs */}
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-purple-900/20 blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-[#D4AF37]/10 blur-[120px] pointer-events-none" />
       
-      {/* Header Bar */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-10">
-        <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-emerald-600 flex items-center justify-center shadow-md shadow-primary-500/20">
-              <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            </div>
-            <h1 className="text-xl font-bold tracking-tight text-slate-800">
-              Oasis<span className="text-primary-600">.ai</span>
-            </h1>
+      {/* Header */}
+      <header className="glass-panel border-b-0 sticky top-0 z-20 px-8 h-20 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#D4AF37] to-[#8E7522] flex items-center justify-center shadow-[0_0_15px_rgba(212,175,55,0.4)]">
+            <Sparkles className="w-5 h-5 text-black" />
           </div>
-          <div className="text-sm font-medium text-slate-500">
+          <h1 className="text-2xl font-bold tracking-widest text-white gold-glow-text">
+            OASIS<span className="text-[#D4AF37]">.AI</span>
+          </h1>
+        </div>
+        <div className="flex items-center gap-4">
+          <span className="text-xs tracking-widest uppercase text-gray-400 border border-gray-800 px-3 py-1 rounded-full bg-black/50">
             Enterprise Relocation Protocol
-          </div>
+          </span>
         </div>
       </header>
 
-      <div className="max-w-5xl mx-auto px-6 py-8 flex flex-col gap-8">
+      <div className="flex-1 max-w-6xl w-full mx-auto px-6 py-10 flex flex-col md:flex-row gap-8 relative z-10">
         
-        {/* Title Section */}
-        <section className="text-center space-y-4 py-6">
-          <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900">
-            Global Expansion, <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-emerald-500">Automated.</span>
-          </h2>
-          <p className="text-lg text-slate-500 max-w-2xl mx-auto">
-            Input your company profile below. Our AI expert team will analyze regulations, calculate tax implications, and draft a complete roadmap for your transition to Dubai.
-          </p>
-        </section>
+        {/* Left Column: Input & Context */}
+        <div className="w-full md:w-5/12 flex flex-col gap-6">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-4"
+          >
+            <h2 className="text-4xl md:text-5xl font-extrabold text-white leading-tight">
+              Global Expansion, <br/>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#FFF1C5]">
+                Automated.
+              </span>
+            </h2>
+            <p className="text-gray-400 text-lg">
+              Describe your company and goals. Our Multi-Agent AI team will analyze free zones, calculate taxes, and generate your Dubai Golden Visa roadmap.
+            </p>
+          </motion.div>
 
-        {/* Input Panel */}
-        <section className="glass-panel rounded-2xl p-6 md:p-8 space-y-6 relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-1 h-full bg-primary-500 rounded-l-2xl"></div>
-          
-          <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">Company Profile & Requirements</label>
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="glass-panel rounded-2xl p-6 relative group"
+          >
+            <div className="flex justify-between items-center mb-4">
+              <label className="text-sm font-semibold text-[#D4AF37] tracking-widest uppercase">
+                Corporate Profile
+              </label>
+              <button 
+                onClick={toggleListen}
+                className={`p-2 rounded-full transition-all duration-300 ${isListening ? 'bg-[#D4AF37] text-black shadow-[0_0_20px_#D4AF37] scale-110' : 'bg-white/5 text-gray-400 hover:bg-[#D4AF37]/20 hover:text-[#D4AF37]'}`}
+                title="Voice Input"
+              >
+                <Mic className="w-5 h-5" />
+              </button>
+            </div>
+            
             <textarea
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
-              placeholder="Describe your company and your goals..."
-              className="w-full h-32 bg-white border border-slate-200 rounded-xl p-4 text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all resize-none text-base shadow-sm"
+              className="w-full h-32 bg-black/40 border border-[#D4AF37]/20 rounded-xl p-4 text-gray-200 placeholder-gray-600 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all resize-none"
             />
-          </div>
-          
-          <div className="flex justify-end">
+            
             <button 
               onClick={startOasis}
               disabled={isLoading}
-              className="relative overflow-hidden group px-8 py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded-xl transition-all disabled:opacity-70 disabled:cursor-not-allowed shadow-md shadow-slate-900/10 hover:shadow-lg active:scale-[0.98]"
+              className="mt-6 w-full py-4 bg-gradient-to-r from-[#D4AF37] to-[#B38E2A] hover:from-[#E5C158] hover:to-[#D4AF37] text-black font-bold text-lg rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(212,175,55,0.3)] hover:shadow-[0_0_30px_rgba(212,175,55,0.5)] flex items-center justify-center gap-3"
             >
-              <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
-              <div className="flex items-center gap-2">
-                {isLoading ? (
-                  <>
-                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    <span>Processing Analysis...</span>
-                  </>
-                ) : (
-                  <>
-                    <span>Generate Roadmap</span>
-                    <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                    </svg>
-                  </>
-                )}
-              </div>
+              {isLoading ? (
+                <>
+                  <Sparkles className="w-5 h-5 animate-spin" />
+                  INITIALIZING AGENTS...
+                </>
+              ) : (
+                <>
+                  <Send className="w-5 h-5" />
+                  EXECUTE PROTOCOL
+                </>
+              )}
             </button>
-          </div>
-        </section>
+          </motion.div>
+        </div>
 
-        {/* Activity Feed / Logs */}
-        <section className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex flex-col min-h-[500px]">
-          <div className="bg-slate-50 border-b border-slate-200 px-6 py-4 flex items-center justify-between">
-            <h3 className="text-sm font-bold text-slate-700 flex items-center gap-2">
-              <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              Execution Activity
-            </h3>
-            {isLoading && (
-              <span className="flex items-center gap-2 text-xs font-medium text-primary-600 bg-primary-50 px-2.5 py-1 rounded-full">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
-                </span>
-                Agents Active
-              </span>
-            )}
+        {/* Right Column: Real-time Terminal */}
+        <motion.div 
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2 }}
+          className="w-full md:w-7/12 flex flex-col terminal-container rounded-2xl overflow-hidden min-h-[600px] relative"
+        >
+          {/* Terminal Header */}
+          <div className="bg-black/80 border-b border-[#D4AF37]/20 px-6 py-4 flex items-center justify-between z-10">
+            <div className="flex items-center gap-3">
+              <Terminal className="w-5 h-5 text-[#D4AF37]" />
+              <h3 className="text-sm font-bold text-white tracking-widest uppercase">
+                Real-time Agentic Core
+              </h3>
+            </div>
+            <div className="flex gap-2">
+              <div className="w-3 h-3 rounded-full bg-gray-600"></div>
+              <div className="w-3 h-3 rounded-full bg-gray-600"></div>
+              <div className={`w-3 h-3 rounded-full transition-colors duration-500 ${isLoading ? 'bg-[#D4AF37] shadow-[0_0_10px_#D4AF37] animate-pulse' : 'bg-gray-600'}`}></div>
+            </div>
           </div>
           
-          <div className="p-6 overflow-y-auto flex-1 font-mono text-sm space-y-4">
+          {/* Terminal Logs */}
+          <div className="p-6 overflow-y-auto flex-1 font-mono text-sm space-y-4 z-0">
             {logs.length === 0 && !isLoading && (
-              <div className="h-full flex flex-col items-center justify-center text-slate-400 space-y-3 py-12">
-                <svg className="w-12 h-12 text-slate-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                </svg>
-                <p>Awaiting initialization. System is standing by.</p>
+              <div className="h-full flex items-center justify-center text-gray-500 opacity-50">
+                SYSTEM STANDBY. AWAITING INPUT.
               </div>
             )}
 
-            <div className="space-y-6">
+            <AnimatePresence>
               {logs.map((log, i) => {
                 const isFinal = log.agent === 'SYSTEM_RESULT';
                 const isError = log.agent === 'ERROR';
-                
+
                 if (isFinal) {
                   return (
-                    <div key={i} className="mt-8 pt-8 border-t border-slate-100 animate-fade-in-up">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-600">
-                          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-                          </svg>
+                    <motion.div 
+                      key={i}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="mt-8 relative"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/20 to-transparent rounded-xl blur-xl"></div>
+                      <div className="glass-panel border-[#D4AF37]/50 rounded-xl p-6 relative z-10">
+                        <div className="flex items-center gap-3 mb-4 border-b border-[#D4AF37]/20 pb-4">
+                          <Sparkles className="w-6 h-6 text-[#D4AF37]" />
+                          <h4 className="text-xl font-bold text-white tracking-wider">FINAL RELOCATION ROADMAP</h4>
                         </div>
-                        <h4 className="text-lg font-bold text-slate-900 font-sans">Final Relocation Roadmap</h4>
+                        <div className="text-gray-200 whitespace-pre-wrap leading-relaxed font-sans text-base">
+                          {log.msg}
+                        </div>
                       </div>
-                      <div className="bg-slate-50 rounded-xl p-6 text-slate-700 whitespace-pre-wrap leading-relaxed font-sans shadow-sm border border-slate-200">
-                        {log.msg}
-                      </div>
-                    </div>
+                    </motion.div>
                   );
                 }
 
                 return (
-                  <div key={i} className="flex gap-4 animate-fade-in-up group">
-                    <div className="w-32 shrink-0 flex flex-col items-end pt-1">
-                      <span className={`text-xs font-bold px-2 py-1 rounded uppercase tracking-wider ${
-                        isError ? 'bg-red-100 text-red-700' :
-                        log.agent.includes('Legal') ? 'bg-blue-100 text-blue-700' :
-                        log.agent.includes('Finance') ? 'bg-emerald-100 text-emerald-700' :
-                        'bg-purple-100 text-purple-700'
-                      }`}>
-                        {formatAgentName(log.agent)}
+                  <motion.div 
+                    key={i}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="flex gap-4"
+                  >
+                    <div className="w-36 shrink-0 flex items-start justify-end pt-1 gap-2 border-r border-[#D4AF37]/20 pr-4">
+                      <span className={`text-xs tracking-wider uppercase font-bold text-right ${isError ? 'text-red-500' : 'text-[#D4AF37]'}`}>
+                        {log.agent.replace(/_/g, ' ')}
                       </span>
+                      {!isError && getAgentIcon(log.agent)}
                     </div>
-                    <div className="flex-1 pb-4 border-b border-slate-100 group-last:border-0 group-last:pb-0">
-                      <p className={`text-slate-600 leading-relaxed ${isError ? 'text-red-600 font-medium' : ''}`}>
+                    <div className="flex-1 pb-2">
+                      <p className={`leading-relaxed ${isError ? 'text-red-400' : 'text-gray-300'}`}>
+                        <span className="text-[#D4AF37]/50 mr-2">{'>'}</span>
                         {log.msg}
                       </p>
                     </div>
-                  </div>
+                  </motion.div>
                 );
               })}
-              <div ref={bottomRef} className="h-1" />
-            </div>
+            </AnimatePresence>
+            <div ref={bottomRef} className="h-4" />
           </div>
-        </section>
-        
-        {/* Footer */}
-        <footer className="text-center text-sm text-slate-400 pt-8 pb-4">
-          Powered by CrewAI & Gemini 1.5 Pro. Designed for Enterprise.
-        </footer>
-        
+        </motion.div>
+
       </div>
     </main>
   );
