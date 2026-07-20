@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 
 from agent_logic import MultiAgentResearchOrchestrator
 from oasis_agent import OasisOrchestrator
+from oasis_crew import OasisCrewOrchestrator
 
 load_dotenv()
 
@@ -70,6 +71,30 @@ async def generate_oasis(req: ResearchRequest):
                 payload = json.dumps(event, ensure_ascii=False)
                 yield f"data: {payload}\n\n"
                 await asyncio.sleep(0.01)
+        except Exception as e:
+            yield f"data: {json.dumps({'type': 'error', 'msg': str(e)})}\n\n"
+        finally:
+            yield "data: [DONE]\n\n"
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+    )
+
+
+# ── Oasis CrewAI Endpoint ────────────────────────────────────────────────────
+@app.post("/api/oasis-crew")
+async def generate_oasis_crew(req: ResearchRequest):
+    topic = req.topic.strip()
+
+    async def event_generator():
+        orchestrator = OasisCrewOrchestrator()
+        try:
+            async for event in orchestrator.run(topic):
+                payload = json.dumps(event, ensure_ascii=False)
+                yield f"data: {payload}\n\n"
+                # await asyncio.sleep(0.01) 不需 sleep，因為是 async generator
         except Exception as e:
             yield f"data: {json.dumps({'type': 'error', 'msg': str(e)})}\n\n"
         finally:
