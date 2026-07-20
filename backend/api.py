@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 
 from agent_logic import MultiAgentResearchOrchestrator
 from oasis_agent import OasisOrchestrator
-from oasis_crew import OasisCrewOrchestrator
+from crews.relocation_crew import RelocationCrewOrchestrator
 
 load_dotenv()
 
@@ -83,18 +83,17 @@ async def generate_oasis(req: ResearchRequest):
     )
 
 
-# ── Oasis CrewAI Endpoint ────────────────────────────────────────────────────
-@app.post("/api/oasis-crew")
-async def generate_oasis_crew(req: ResearchRequest):
+# ── Module 1: Relocation Concierge Endpoint ───────────────────────────────────
+@app.post("/api/relocation")
+async def generate_relocation(req: ResearchRequest):
     topic = req.topic.strip()
 
     async def event_generator():
-        orchestrator = OasisCrewOrchestrator()
+        orchestrator = RelocationCrewOrchestrator()
         try:
             async for event in orchestrator.run(topic):
                 payload = json.dumps(event, ensure_ascii=False)
                 yield f"data: {payload}\n\n"
-                # await asyncio.sleep(0.01) 不需 sleep，因為是 async generator
         except Exception as e:
             yield f"data: {json.dumps({'type': 'error', 'msg': str(e)})}\n\n"
         finally:

@@ -1,59 +1,61 @@
 @import "tailwindcss";
 
 @theme {
-  --color-dubai-gold: #D4AF37;
-  --color-dubai-gold-light: #E5C158;
-  --color-dubai-gold-dark: #B38E2A;
-  --color-dubai-bg: #0B0A11;
-  --color-dubai-card: rgba(18, 16, 28, 0.6);
+  --color-gov-navy: #0F172A;
+  --color-gov-gold: #C6A87C;
+  --color-gov-bg: #F9FAFB;
+  --color-gov-white: #FFFFFF;
+  --color-gov-gray: #475569;
 }
 
 body {
-  background-color: var(--color-dubai-bg);
-  background-image: 
-    radial-gradient(circle at 15% 50%, rgba(45, 27, 78, 0.4), transparent 25%),
-    radial-gradient(circle at 85% 30%, rgba(212, 175, 55, 0.05), transparent 25%);
-  color: #e2e8f0;
+  background-color: var(--color-gov-bg);
+  color: var(--color-gov-navy);
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Glassmorphism Styles */
-.glass-panel {
-  background: var(--color-dubai-card);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(212, 175, 55, 0.15);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+/* Official Card Layout */
+.gov-card {
+  background-color: var(--color-gov-white);
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease-in-out;
 }
 
-.gold-glow {
-  box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+.gov-card:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border-color: #CBD5E1;
 }
 
-.gold-glow-text {
-  text-shadow: 0 0 8px rgba(212, 175, 55, 0.5);
+/* Vertical Stepper Lines */
+.stepper-line {
+  position: absolute;
+  left: 11px;
+  top: 24px;
+  bottom: -24px;
+  width: 2px;
+  background-color: #E2E8F0;
+  z-index: 0;
 }
 
-/* Terminal Styles */
-.terminal-container {
-  background: rgba(5, 5, 10, 0.85);
-  border: 1px solid rgba(212, 175, 55, 0.2);
-  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+.stepper-line-active {
+  background-color: var(--color-gov-gold);
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: #F1F5F9;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(212, 175, 55, 0.3);
-  border-radius: 3px;
+  background: #CBD5E1;
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(212, 175, 55, 0.6);
+  background: #94A3B8;
 }
