@@ -1,52 +1,63 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-@layer base {
-  body {
-    @apply bg-black text-green-500 font-mono;
-    background-image: 
-      linear-gradient(rgba(0, 20, 0, 0.9) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0, 20, 0, 0.9) 1px, transparent 1px);
-    background-size: 20px 20px;
-    background-color: #000;
+@theme {
+  --color-primary-50: #f0fdf4;
+  --color-primary-100: #dcfce7;
+  --color-primary-500: #22c55e;
+  --color-primary-600: #16a34a;
+  --color-primary-700: #15803d;
+}
+
+body {
+  background-color: #f8fafc;
+  color: #0f172a;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+.log-container {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.02);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Animations */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-.matrix-text {
-  text-shadow: 0 0 5px #0f0, 0 0 10px #0f0;
-}
-
-.terminal-box {
-  box-shadow: inset 0 0 20px rgba(0, 255, 0, 0.2), 0 0 15px rgba(0, 255, 0, 0.4);
-  border: 1px solid rgba(0, 255, 0, 0.5);
-  background: rgba(0, 10, 0, 0.8);
-  backdrop-filter: blur(4px);
-}
-
-.typewriter {
-  overflow: hidden;
-  border-right: 2px solid #0f0;
-  white-space: pre-wrap;
-  animation: blink-caret .75s step-end infinite;
-}
-
-@keyframes blink-caret {
-  from, to { border-color: transparent }
-  50% { border-color: #0f0; }
-}
-
-/* Custom Scrollbar for Terminal */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: #001100;
-}
-::-webkit-scrollbar-thumb {
-  background: #00ff00;
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #00cc00;
+.animate-fade-in-up {
+  animation: fade-in-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
