@@ -178,7 +178,9 @@ async def writer_agent(state: ResearchState, emit) -> ResearchState:
         "Rules:\n"
         "1. After each factual claim, add inline citation like [1] matching the source number.\n"
         "2. Mark predictions with [Prediction] and facts with [Fact].\n"
-        "3. If a source is stale, add [stale] after its citation.\n\n"
+        "3. If a source is stale, add [stale] after its citation.\n"
+        "4. Executive Summary MUST be strictly under 100 words (3-4 sentences max).\n"
+        "5. Key Findings MUST be a bulleted list. Each bullet must start with a short title (bolded) followed by a colon or dash, and the description must be 2-3 sentences max.\n\n"
         "Write EXACTLY these sections:\n"
         "## Executive Summary\n"
         "## Key Findings\n"
@@ -246,6 +248,75 @@ async def mindmap_agent(state: ResearchState, emit) -> ResearchState:
 # ── Orchestrator ──────────────────────────────────────────────────────────────
 class MultiAgentResearchOrchestrator:
     async def run(self, topic: str) -> AsyncGenerator[dict, None]:
+        if topic.strip().upper() == "TEST":
+            # --- MOCK MODE FOR TESTING UI ---
+            yield {"type": "agent_switch", "agent": "planner"}
+            yield {"type": "agent_log", "agent": "planner", "msg": "[Planner] Analyzing mock topic..."}
+            await asyncio.sleep(1)
+            
+            yield {"type": "agent_switch", "agent": "research"}
+            yield {"type": "agent_log", "agent": "research", "msg": "[Research] Simulating parallel searches..."}
+            await asyncio.sleep(1.5)
+            
+            yield {"type": "agent_switch", "agent": "critic"}
+            yield {"type": "agent_log", "agent": "critic", "msg": "[Critic] Evaluating sources..."}
+            await asyncio.sleep(1)
+            
+            yield {"type": "agent_switch", "agent": "writer"}
+            yield {"type": "agent_log", "agent": "writer", "msg": "[Writer] Generating mock report..."}
+            await asyncio.sleep(1.5)
+            
+            yield {"type": "agent_switch", "agent": "mindmap"}
+            yield {"type": "agent_log", "agent": "mindmap", "msg": "[Mindmap] Generating JSON mind map structure..."}
+            await asyncio.sleep(1)
+
+            mock_report = (
+                "## Executive Summary\n"
+                "This is a mock executive summary generated for testing purposes. It demonstrates the new card-based layout with proper padding and background colors. The summary is strictly constrained to prevent overwhelming the user with text.\n\n"
+                "## Key Findings\n"
+                "* **Rapid Growth**: The market is experiencing unprecedented growth, reaching a valuation of USD 1.5 billion in 2025 [1]. This trend is expected to continue with a 25.5% CAGR [Prediction].\n"
+                "* **Technological Shifts**: New paradigms are shifting the landscape, causing legacy systems to become obsolete [Fact] [2].\n"
+                "* **Global Adoption**: North America and APAC regions are leading the adoption curve [Fact].\n\n"
+                "## Deep Analysis\n"
+                "The fundamental drivers of this industry include advanced algorithms and cheap compute power. Analysts note a 40% reduction in costs over two years [3].\n\n"
+                "## Timeline\n"
+                "```gantt\n"
+                "title Industry Evolution\n"
+                "dateFormat YYYY-MM\n"
+                "section Key Milestones\n"
+                "Initial Breakthrough :2023-01, 2023-06\n"
+                "Mass Adoption :2024-05, 2024-12\n"
+                "section Future Projections\n"
+                "AGI Achieved :2026-01, 2026-12\n"
+                "```\n\n"
+                "## Outlook & Risks\n"
+                "The primary risks include regulatory challenges and hardware supply chain constraints [Prediction].\n\n"
+                "## References\n"
+                "1. Mock Source Alpha\n"
+                "2. Mock Source Beta\n"
+                "3. Mock Source Gamma\n"
+            )
+            mock_sources = [
+                {"title": "Mock Source Alpha", "url": "https://example.com/alpha", "confidence": 0.95, "tags": ["Fact", "Research Data"], "is_stale": False},
+                {"title": "Mock Source Beta", "url": "https://example.com/beta", "confidence": 0.82, "tags": ["Expert Opinion"], "is_stale": False},
+                {"title": "Mock Source Gamma", "url": "https://example.com/gamma", "confidence": 0.76, "tags": ["Prediction"], "is_stale": True},
+            ]
+            mock_mindmap = {
+                "center": "Mock Test Topic",
+                "branches": [
+                    {"label": "Growth", "children": [{"label": "USD 1.5B"}, {"label": "25.5% CAGR"}]},
+                    {"label": "Technology", "children": [{"label": "Algorithms"}, {"label": "Compute"}]},
+                    {"label": "Regions", "children": [{"label": "North America"}, {"label": "APAC"}]}
+                ]
+            }
+
+            yield {
+                "type": "result",
+                "report": mock_report,
+                "sources": mock_sources,
+                "mindmap": mock_mindmap
+            }
+            return
         log_queue: asyncio.Queue = asyncio.Queue()
 
         async def emit(agent: str, msg: str):
